@@ -8,3 +8,4 @@
 /dataSources.local.xml
 CMakeLists.txt
 /cmake-build-debug
+workspace.xml
