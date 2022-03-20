@@ -9,4 +9,4 @@
 CMakeLists.txt
 /cmake-build-debug
 workspace.xml
-/.idea
+.idea
