@@ -26,13 +26,14 @@ struct ReportType {
     struct ReportType *nextReport;
 };
 
+//interface to load a file
 FILE *readFile() {
     FILE *file = NULL;
     char fileDir[200];
     int continueOrExit = 0;
 
     //gets fileName by user
-    printf("File's directory to be loaded: ");
+    printf("\nInput file's directory to be loaded: ");
     scanf("%s", fileDir);
 
     //read the file
@@ -58,6 +59,7 @@ FILE *readFile() {
 
 //call reports by reference and push lines of txt on that.
 int readClasses(struct ClassType *classes, int *amountClasses) {
+    printf("\nReading classes file ...");
     FILE *file = readFile();
     char fileLine[SLINE_CLASS];
     int amount = 0, i, j;
@@ -98,6 +100,7 @@ int readClasses(struct ClassType *classes, int *amountClasses) {
 }
 
 int readReport(struct ReportType *reports, int *amountReports) {
+    printf("\nReading reports file ...");
     FILE *file = readFile();
     char fileLine[SLINE_REPORT];
     int amount = 0, i, j;
