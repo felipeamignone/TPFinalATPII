@@ -9,3 +9,5 @@
 CMakeLists.txt
 /cmake-build-debug
 workspace.xml
+.idea
+.gitignore
