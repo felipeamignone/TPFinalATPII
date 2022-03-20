@@ -12,11 +12,10 @@ struct ClassType {
     struct ClassType *nextClass;
 };
 
-//call classes by reference and push lines of txt on that.
-int readClasses(struct ClassType *classes, int *amountClasses) {
+FILE * readFile(){
     FILE *file = NULL;
-    char fileDir[200], fileLine[SLINE];
-    int continueOrExit = 0, amount = 0, i, j;
+    char fileDir[200];
+    int continueOrExit = 0;
 
     //gets fileName by user
     printf("File's directory to be loaded: ");
@@ -33,12 +32,21 @@ int readClasses(struct ClassType *classes, int *amountClasses) {
         if (continueOrExit) {
             //recursion to read a new directory
             printf("\n\n");
-            readClasses(classes, amountClasses);
+            return readFile();
         } else {
             //exit function
-            return 0;
+            printf("\n\nWasn't possible read the file!");
+            return NULL;
         }
     }
+    return file;
+}
+
+//call classes by reference and push lines of txt on that.
+int readClasses(struct ClassType *classes, int *amountClasses) {
+    FILE *file = readFile();
+    char fileLine[SLINE];
+    int amount = 0, i, j;
 
     //looping while fgets doesn't return an empty line.
     while (fgets(fileLine, SLINE, file)) {
@@ -81,7 +89,6 @@ int main(void) {
     struct ClassType classes[10] = {};
     readClasses(classes, amountClasses);
 
-    printf("\n%d", *amountClasses);
     printf("\n\n");
     for (int k = 0; k < *amountClasses; k++) {
         printf("Codigo: %s - Disciplina: %s\n", classes[k].code, classes[k].name);

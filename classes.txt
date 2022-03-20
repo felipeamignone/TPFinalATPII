@@ -1,0 +1,7 @@
+1 Geografia
+2 Historia
+3 Gramatica
+5 Literatura
+6 Matematica
+7 Fisica
+8 Quimica
