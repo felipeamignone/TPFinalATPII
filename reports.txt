@@ -1,0 +1,12 @@
+Felipe 1 10.00
+Felipe 2 08.35
+Felipe 3 03.00
+Gustavo 1 10.00
+Gustavo 2 08.00
+Gustavo 3 04.99
+Marcio 1 01.00
+Marcio 2 00.00
+Marcio 3 02.00
+Souza 1 04.00
+Souza 2 05.00
+Souza 3 06.00

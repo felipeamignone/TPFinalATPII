@@ -4,7 +4,9 @@
 
 #define SNAME 20
 #define SCODE 2
-#define SLINE 22 // SNAME + SCODE
+#define SNOTE 7 //dd.dd/n (note is the last information in line)
+#define SLINE_CLASS 22 // SNAME + SCODE
+#define SLINE_REPORT 28 // SNAME + SCODE + SNOTE
 
 struct ClassType {
     char code[SCODE];
@@ -12,7 +14,19 @@ struct ClassType {
     struct ClassType *nextClass;
 };
 
-FILE * readFile(){
+struct Note {
+    char classCode[SCODE];
+    char className[SNAME];
+    char value[SNOTE];
+};
+
+struct ReportType {
+    char studentName[SNAME];
+    struct Note note;
+    struct ReportType *nextReport;
+};
+
+FILE *readFile() {
     FILE *file = NULL;
     char fileDir[200];
     int continueOrExit = 0;
@@ -42,14 +56,14 @@ FILE * readFile(){
     return file;
 }
 
-//call classes by reference and push lines of txt on that.
+//call reports by reference and push lines of txt on that.
 int readClasses(struct ClassType *classes, int *amountClasses) {
     FILE *file = readFile();
-    char fileLine[SLINE];
+    char fileLine[SLINE_CLASS];
     int amount = 0, i, j;
 
     //looping while fgets doesn't return an empty line.
-    while (fgets(fileLine, SLINE, file)) {
+    while (fgets(fileLine, SLINE_CLASS, file)) {
         i = 0;
         j = 0;
         char code[SCODE] = {}, name[SNAME] = {};
@@ -83,15 +97,71 @@ int readClasses(struct ClassType *classes, int *amountClasses) {
     return 0;
 }
 
-int main(void) {
-    int initializerAmount = 0;
-    int *amountClasses = &initializerAmount;
-    struct ClassType classes[10] = {};
-    readClasses(classes, amountClasses);
+int readReport(struct ReportType *reports, int *amountReports) {
+    FILE *file = readFile();
+    char fileLine[SLINE_REPORT];
+    int amount = 0, i, j;
 
-    printf("\n\n");
-    for (int k = 0; k < *amountClasses; k++) {
+    //looping while fgets doesn't return an empty line.
+    while (fgets(fileLine, SLINE_REPORT, file)) {
+        i = 0;
+        j = 0;
+        char studentName[SNAME] = {}, classCode[SCODE] = {}, note[SNOTE] = {};
+
+        //get student's name in line
+        while (fileLine[i] != ' ') {
+            studentName[i] = fileLine[i];
+            i++;
+        }
+        i++;
+        //get class code
+        while (fileLine[i] != ' ') {
+            classCode[j] = fileLine[i];
+            i++;
+            j++;
+        }
+        j = 0;
+
+        //get note
+        while (fileLine[i] != '\0' && fileLine[i] != '\n') {
+            note[j] = fileLine[i];
+            i++;
+            j++;
+        }
+
+        //assign values on pointer
+        strcpy(reports[amount].studentName, studentName);
+        strcpy(reports[amount].note.classCode, classCode);
+        strcpy(reports[amount].note.value, note);
+        reports[amount].nextReport = &reports[amount + 1];
+        amount++;
+    }
+
+    //get reports amount to use it on main.
+    if (amount) {
+        *amountReports = amount;
+    }
+    return 0;
+
+}
+
+int main(void) {
+    int initializerAmountClasses = 0,initializerAmountReports = 0, k;
+    int *amountClasses = &initializerAmountClasses;
+    int *amountReports = &initializerAmountReports;
+    struct ClassType classes[10] = {};
+    struct ReportType reports[20] = {};
+    readClasses(classes, amountClasses);
+    readReport(reports, amountReports);
+
+    printf("\nClasses:\n");
+    for (k = 0; k < *amountClasses; k++) {
         printf("Codigo: %s - Disciplina: %s\n", classes[k].code, classes[k].name);
+    }
+
+    printf("\nReports:\n");
+    for (k = 0; k < *amountReports; k++) {
+        printf("Aluno: %s - Disciplina: %s - Nota: %s\n", reports[k].studentName, reports[k].note.classCode, reports[k].note.value);
     }
 }
 
