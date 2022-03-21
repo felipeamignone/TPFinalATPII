@@ -3,10 +3,10 @@
 #include <string.h>
 
 #define SNAME 20
-#define SCODE 2
-#define SNOTE 7 //dd.dd/n (note is the last information in line)
-#define SLINE_CLASS 22 // SNAME + SCODE
-#define SLINE_REPORT 28 // SNAME + SCODE + SNOTE
+#define SCODE 4 //dd/n (note is the last information in line of classes file)
+#define SNOTE 7 //dd.dd/n (note is the last information in line of reports file)
+#define SLINE_CLASS 24 // SNAME + SCODE
+#define SLINE_REPORT 31 // SNAME + SCODE + SNOTE
 
 struct ClassType {
     char code[SCODE];
@@ -59,7 +59,7 @@ FILE *readFile() {
 
 //call reports by reference and push lines of txt on that.
 int readClasses(struct ClassType *classes, int *amountClasses) {
-    printf("\nReading classes file ...");
+    printf("\n\nReading classes file ...");
     FILE *file = readFile();
     char fileLine[SLINE_CLASS];
     int amount = 0, i, j;
@@ -85,14 +85,14 @@ int readClasses(struct ClassType *classes, int *amountClasses) {
             j++;
         }
 
-        //now we assign the code, name and next pointer to the struct.
+        //now we assign the code, name and next pointer to the struct pointer.
         strcpy(classes[amount].code, code);
         strcpy(classes[amount].name, name);
         classes[amount].nextClass = &classes[amount + 1];
         amount++;
     }
 
-    //We get amount classes in function parameter to use it on main.
+    //We get classes amount in function parameter to use it on main.
     if (amount) {
         *amountClasses = amount;
     }
@@ -100,7 +100,7 @@ int readClasses(struct ClassType *classes, int *amountClasses) {
 }
 
 int readReport(struct ReportType *reports, int *amountReports) {
-    printf("\nReading reports file ...");
+    printf("\n\nReading reports file ...");
     FILE *file = readFile();
     char fileLine[SLINE_REPORT];
     int amount = 0, i, j;
@@ -145,26 +145,72 @@ int readReport(struct ReportType *reports, int *amountReports) {
         *amountReports = amount;
     }
     return 0;
+}
 
+int assignClassesName(struct ReportType *reports, struct ClassType *classes, int amountReports, int amountClasses) {
+    int i, j;
+    for (i = 0; i <= amountReports; i++) {
+        //index of name founded on linear search
+        int nameIndex = -1;
+
+        //find index of class with the same code that parameter with linear search
+        for (j = 0; j <= amountClasses; j++) {
+            int compareResult = strcmp(reports[i].note.classCode, classes[j].code);
+            // strcmp returns 0 if strings are equals
+            if (compareResult == 0) {
+                printf("\nclassCode %s, classes[j].code: %s", reports[i].note.classCode, classes[j].code);
+                printf("class name found: %s", classes[j].name);
+                nameIndex = j;
+                break;
+            }
+        }
+
+        //assign the name in struct reports, if founded.
+        if (nameIndex != -1) {
+            strcpy(reports[i].note.className, classes[nameIndex].name);
+        } else {
+            strcpy(reports[i].note.className, "WithoutRegister");
+        }
+    }
+
+    return 0;
 }
 
 int main(void) {
-    int initializerAmountClasses = 0,initializerAmountReports = 0, k;
+    //initializing counters
+    int initializerAmountClasses = 0, initializerAmountReports = 0, k;
     int *amountClasses = &initializerAmountClasses;
     int *amountReports = &initializerAmountReports;
+
+    //initialize arrays
     struct ClassType classes[10] = {};
     struct ReportType reports[20] = {};
+
+    //call functions to read files
     readClasses(classes, amountClasses);
     readReport(reports, amountReports);
 
+    //printing classes
     printf("\nClasses:\n");
     for (k = 0; k < *amountClasses; k++) {
         printf("Codigo: %s - Disciplina: %s\n", classes[k].code, classes[k].name);
     }
 
+    //printing reports
     printf("\nReports:\n");
     for (k = 0; k < *amountReports; k++) {
-        printf("Aluno: %s - Disciplina: %s - Nota: %s\n", reports[k].studentName, reports[k].note.classCode, reports[k].note.value);
+        printf("Aluno: %20s - Disciplina: %s - Nota: %s\n", reports[k].studentName, reports[k].note.classCode,
+               reports[k].note.value);
+    }
+
+    //assign classes names into struct reports
+    assignClassesName(reports, classes, *amountReports, *amountClasses);
+
+    printf("\nReports with names:\n");
+    for (k = 0; k < *amountReports; k++) {
+        printf("Aluno: %s - Disciplina: %s Codigo: %s - Nota: %s\n", reports[k].studentName, reports[k].note.className,
+               reports[k].note.classCode,
+               reports[k].note.value);
     }
 }
 
