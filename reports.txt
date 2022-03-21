@@ -10,3 +10,5 @@ Marcio 1 02.00
 Souza 2 04.00
 Souza 3 05.00
 Souza 4 06.00
+Felipe 4 10.00
+Rodrigo 1 08.00
